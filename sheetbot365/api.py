@@ -38,41 +38,42 @@ def get_auth_headers(config):
         'Content-Type': 'application/json'
     }
 
-def get_emails(headers, config, limit=50, unread_only=True):
-    """Get emails from the inbox using Microsoft Graph API.
-    
-    Args:
-        headers (dict): API request headers
-        config (dict): Configuration settings
-        limit (int): Maximum number of emails to retrieve
-        unread_only (bool): Whether to filter for unread emails only
-        
-    Returns:
-        list: Email objects from the API
-    """
+def get_emails(headers, config, limit=100, unread_only=True):
+    """Get unread emails from the inbox using Microsoft Graph API with pagination support."""
     email_user = config['microsoft']['email_user']
-    inbox_url = f'https://graph.microsoft.com/v1.0/users/{email_user}/mailFolders/Inbox/messages?$top={limit}'
+    all_emails = []
     
-    response = requests.get(inbox_url, headers=headers)
-    
-    if response.status_code != 200:
-        logging.error(f"Error getting emails: {response.status_code} - {response.text}")
-        return []
-        
-    data = response.json()
-    emails = data.get('value', [])
-
-    if not emails:
-        logging.warning("No emails found in inbox.")
-        return []
-
+    # Build the initial URL with a filter for unread emails if needed
     if unread_only:
-        emails = [email for email in emails if email.get('isRead') is False]
-        logging.info(f"Found {len(emails)} unread emails in inbox.")
+        next_link = f'https://graph.microsoft.com/v1.0/users/{email_user}/mailFolders/Inbox/messages?$filter=isRead eq false&$top={min(limit, 1000)}'
     else:
-        logging.info(f"Found {len(emails)} emails in inbox.")
+        next_link = f'https://graph.microsoft.com/v1.0/users/{email_user}/mailFolders/Inbox/messages?$top={min(limit, 1000)}'
     
-    return emails
+    while next_link and len(all_emails) < limit:
+        response = requests.get(next_link, headers=headers)
+        
+        if response.status_code != 200:
+            logging.error(f"Error getting emails: {response.status_code} - {response.text}")
+            break
+            
+        data = response.json()
+        emails = data.get('value', [])
+        
+        if not emails:
+            break
+            
+        all_emails.extend(emails)
+        next_link = data.get('@odata.nextLink')
+    
+    if not all_emails:
+        if unread_only:
+            logging.warning("No unread emails found in inbox.")
+        else:
+            logging.warning("No emails found in inbox.")
+        return []
+
+    logging.info(f"Found {len(all_emails)} {'unread ' if unread_only else ''}emails in inbox.")
+    return all_emails[:limit]
 
 def get_attachments(headers, config, msg_id):
     """Get attachments for a specific email.
