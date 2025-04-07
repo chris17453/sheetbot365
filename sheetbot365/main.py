@@ -2,15 +2,15 @@
 import sys
 import argparse
 import logging
-from email_automation.config import load_config
-from email_automation.utils import setup_logging
-from email_automation.commands import cmd_scan, cmd_delete, cmd_status
+from sheetbot365.config import load_config
+from sheetbot365.utils import setup_logging
+from sheetbot365.commands import cmd_scan, cmd_delete, cmd_status
 
 def main():
     """Main entry point for the email automation CLI."""
     parser = argparse.ArgumentParser(description='Email Automation System')
-    parser.add_argument('--config', '-c', default='/etc/email_automation/config.yaml',
-                      help='Path to YAML configuration file (default: /etc/email_automation/config.yaml)')
+    parser.add_argument('--config', '-c', default='/etc/sheetbot365/config.yaml',
+                      help='Path to YAML configuration file (default: /etc/sheetbot365/config.yaml)')
     
     subparsers = parser.add_subparsers(dest='command', help='Command to run')
     

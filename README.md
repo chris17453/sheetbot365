@@ -36,7 +36,7 @@ database:
   server: mssql-email
   user: webuser
   password: 'yourpassword'
-  database: email_automation
+  database: sheetbot365
 
 # FreeTDS configuration (for SQL Server connections)
 freetds:
@@ -56,7 +56,7 @@ microsoft:
 # File paths
 paths:
   lock_file: /tmp/email_sync.lock
-  log_file: /var/log/email_automation.log
+  log_file: /var/log/sheetbot365.log
 
 # Default values
 defaults:
@@ -68,7 +68,7 @@ defaults:
     inbox_retention_days: 60
 ```
 
-Save this file to `/etc/email_automation/config.yaml` or specify a custom location with the `--config` parameter.
+Save this file to `/etc/sheetbot365/config.yaml` or specify a custom location with the `--config` parameter.
 
 ## Database Schema
 

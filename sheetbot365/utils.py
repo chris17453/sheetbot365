@@ -10,7 +10,7 @@ def setup_logging(config, log_level=logging.INFO):
         config (dict): Configuration settings
         log_level (int): Logging level
     """
-    log_file = config['paths'].get('log_file', '/var/log/email_automation.log')
+    log_file = config['paths'].get('log_file', '/var/log/sheetbot365.log')
     
     logging.basicConfig(
         level=log_level,

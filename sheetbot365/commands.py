@@ -1,12 +1,12 @@
 import logging
 import pymssql
 import base64
-from email_automation.utils import create_lock, remove_lock
-from email_automation.api import (
+from sheetbot365.utils import create_lock, remove_lock
+from sheetbot365.api import (
     get_auth_headers, get_emails, get_attachments, 
     mark_as_read, delete_email_from_inbox
 )
-from email_automation.database import (
+from sheetbot365.database import (
     insert_email, insert_attachment, update_email_status,
     mark_emails_deleted, delete_emails_from_db,
     get_emails_to_delete_from_inbox, get_email_status_counts
